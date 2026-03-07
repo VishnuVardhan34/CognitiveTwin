@@ -108,10 +108,35 @@ pip install -e .
 
 ### 2. Download Datasets
 
+> **⚠️ Users in India (or anywhere the primary links are inaccessible):**
+> The official dataset websites can be hard to reach from India.  
+> Use the **Kaggle / alternative methods** described below, or run:
+> ```bash
+> pip install kaggle
+> # Set up ~/.kaggle/kaggle.json (see below), then:
+> python scripts/download_datasets.py --dataset all --method kaggle --out ./datasets
+> ```
+
 #### DEAP Dataset
+
+**Option A – Official (requires registration, may be blocked in some regions):**
 1. Register at [eecs.qmul.ac.uk/mmv/datasets/deap](http://www.eecs.qmul.ac.uk/mmv/datasets/deap/download.html)
 2. Download `data_preprocessed_python.zip`
 3. Extract to `datasets/DEAP/data_preprocessed_python/`
+
+**Option B – Kaggle (recommended for India / blocked regions):**
+```bash
+# Install Kaggle API (once)
+pip install kaggle
+
+# Download via Kaggle (requires a free account + API token)
+kaggle datasets download -d laevitasimpl/deap-dataset-for-emotion-analysis \
+    -p datasets/DEAP --unzip
+```
+
+**Option C – Request by e-mail:**
+Send your name and institutional affiliation to **deap@eecs.qmul.ac.uk** —
+the authors usually respond within a few days with a direct download link.
 
 ```bash
 mkdir -p datasets/DEAP
@@ -119,12 +144,38 @@ unzip data_preprocessed_python.zip -d datasets/DEAP/
 ```
 
 #### SEED-IV Dataset
-1. Register at [bcmi.sjtu.edu.cn/~seed](https://bcmi.sjtu.edu.cn/~seed/seed-iv.html)
-2. Download and extract to `datasets/SEED-IV/`
+
+**Option A – Official (requires registration, may be slow from India):**
+1. Fill in the request form at [bcmi.sjtu.edu.cn/~seed/seed-iv.html](https://bcmi.sjtu.edu.cn/~seed/seed-iv.html#download-link) using an institutional e-mail.
+2. Extract to `datasets/SEED-IV/`
+
+**Option B – Kaggle:**
+```bash
+kaggle datasets download -d qiriro/seed-iv-eeg-emotion-recognition \
+    -p datasets/SEED-IV --unzip
+```
+
+**Option C – Request by e-mail:**
+Contact the BCMI lab at **bcmi@sjtu.edu.cn** with your institutional e-mail
+for a Google Drive / direct link.
 
 #### DROZY Dataset
-1. Available at [drozy.ulg.ac.be](http://drozy.ulg.ac.be/)
+
+**Option A – Official:**
+1. Available at [drozy.ulg.ac.be](http://drozy.ulg.ac.be/) *(try a VPN if this is blocked)*
 2. Extract to `datasets/DROZY/`
+
+**Option B – Zenodo mirror:**
+Check [https://zenodo.org/search?q=DROZY](https://zenodo.org/search?q=DROZY) for a
+community-uploaded copy.
+
+**Option C – Request by e-mail:**
+Contact the DROZY dataset authors (University of Liège) at **drozy@ulg.ac.be** for
+a Google Drive or alternative link.
+
+> **See [`scripts/download_datasets.py`](scripts/download_datasets.py) for a
+> fully-automated download helper that uses the Kaggle API and prints step-by-step
+> manual instructions as a fallback.**
 
 ### 3. Configure
 
@@ -196,6 +247,65 @@ npm start
 
 ---
 
+## 🌐 Alternative Dataset Download Methods
+
+> **This section is for users in India or other regions where the official dataset
+> websites are inaccessible or very slow.**
+
+### Kaggle API Setup (one-time)
+
+1. Create a free account at [kaggle.com](https://www.kaggle.com).
+2. Go to **Account → Settings → API → Create New Token** – this downloads `kaggle.json`.
+3. Place it at `~/.kaggle/kaggle.json` (Linux/macOS) or `C:\Users\<user>\.kaggle\kaggle.json` (Windows).
+4. On Linux/macOS run `chmod 600 ~/.kaggle/kaggle.json`.
+5. `pip install kaggle`
+
+### Using the Download Helper Script
+
+```bash
+# Download a single dataset
+python scripts/download_datasets.py --dataset deap   --method kaggle --out ./datasets
+python scripts/download_datasets.py --dataset seediv --method kaggle --out ./datasets
+python scripts/download_datasets.py --dataset drozy  --method manual  # no Kaggle mirror yet
+
+# Download all three datasets at once
+python scripts/download_datasets.py --dataset all --method kaggle --out ./datasets
+
+# Print manual/email instructions for any dataset
+python scripts/download_datasets.py --dataset deap --method manual
+
+# Show all known links and mirrors
+python scripts/download_datasets.py --dataset all --method info
+```
+
+### Direct Kaggle Links (browser download)
+
+| Dataset | Kaggle Link |
+|---------|-------------|
+| DEAP | [kaggle.com/datasets/laevitasimpl/deap-dataset-for-emotion-analysis](https://www.kaggle.com/datasets/laevitasimpl/deap-dataset-for-emotion-analysis) |
+| DEAP (alternate) | [kaggle.com/datasets/birdy654/eeg-brainwave-dataset-feeling-emotions](https://www.kaggle.com/datasets/birdy654/eeg-brainwave-dataset-feeling-emotions) |
+| SEED-IV | [kaggle.com/datasets/qiriro/seed-iv-eeg-emotion-recognition](https://www.kaggle.com/datasets/qiriro/seed-iv-eeg-emotion-recognition) |
+| DROZY | Not yet on Kaggle – use e-mail request (see below) |
+
+### E-mail Requests (always works)
+
+If Kaggle mirrors are unavailable, you can request datasets directly:
+
+| Dataset | Contact |
+|---------|---------|
+| DEAP | deap@eecs.qmul.ac.uk — include your name and institution |
+| SEED-IV | bcmi@sjtu.edu.cn — use an institutional/university e-mail |
+| DROZY | drozy@ulg.ac.be — ask for a Google Drive or alternative link |
+
+### Using a VPN
+
+If you prefer downloading from the official sites, a free VPN (e.g.
+[Windscribe](https://windscribe.com/), [ProtonVPN](https://protonvpn.com/)) can
+bypass regional restrictions.  Connect to a European or US server, then use the
+original links listed in **Section 2** above.
+
+---
+
 ## 📁 Directory Structure
 
 ```
@@ -206,6 +316,8 @@ CognitiveTwin/
 ├── .gitignore
 ├── configs/
 │   └── default_config.yaml        # All hyperparameters and paths
+├── scripts/
+│   └── download_datasets.py       # Alternative dataset downloader (Kaggle API)
 ├── data/
 │   ├── __init__.py
 │   └── dataset_loaders.py         # DEAP, SEED-IV, DROZY loaders
