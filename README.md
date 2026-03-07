@@ -17,7 +17,7 @@ Unscented Kalman Filter smoothing.
 ## 👥 Team
 
 | Name | Student ID |
-|------|-----------|
+|------|------------|
 | Sumanth Kotikalapudi | BT23CSH003 |
 | Sai Charna Kukkala | BT23CSH002 |
 | Sumeeth Kumar | BT23CSH030 |
