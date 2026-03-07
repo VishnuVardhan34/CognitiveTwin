@@ -22,6 +22,7 @@ class EyeFeatureExtractor:
     """
 
     N_FEATURES: int = 7
+    DETREND_WINDOW_SEC: float = 2.0  # moving-median window for pupil detrending
 
     def __init__(
         self,
@@ -79,7 +80,7 @@ class EyeFeatureExtractor:
             Detrended signal of the same shape.
         """
         n = len(signal)
-        win = max(1, int(self.sfreq * 2.0))  # 2-second window
+        win = max(1, int(self.sfreq * self.DETREND_WINDOW_SEC))
         out = np.empty(n, dtype=np.float32)
         for i in range(n):
             lo = max(0, i - win // 2)

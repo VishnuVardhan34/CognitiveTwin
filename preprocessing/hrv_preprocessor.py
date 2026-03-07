@@ -22,6 +22,8 @@ class HRVFeatureExtractor:
     """
 
     N_FEATURES: int = 10
+    # Minimum inter-beat interval: 0.4 s ≈ 150 bpm maximum heart rate
+    MIN_IBI_SEC: float = 0.4
     # Frequency bands (Hz)
     VLF_BAND: Tuple[float, float] = (0.003, 0.04)
     LF_BAND: Tuple[float, float] = (0.04, 0.15)
@@ -79,7 +81,7 @@ class HRVFeatureExtractor:
         """
         ppg = ppg.astype(np.float64)
         # Minimum distance between peaks: ~40 bpm → 1.5 s
-        min_distance = int(self.sfreq * 0.4)
+        min_distance = int(self.sfreq * self.MIN_IBI_SEC)
         peaks, _ = ss.find_peaks(
             ppg,
             distance=min_distance,
