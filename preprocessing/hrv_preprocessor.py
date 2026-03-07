@@ -64,7 +64,7 @@ class HRVFeatureExtractor:
         mask = (freqs >= fmin) & (freqs <= fmax)
         if mask.sum() < 2:
             return 0.0
-        return float(np.trapz(psd[mask], freqs[mask]))
+        return float(np.trapezoid(psd[mask], freqs[mask]))
 
     # ------------------------------------------------------------------
     # Public API
