@@ -37,6 +37,8 @@ model:
   class_names: ["Underload", "Optimal", "Overload", "Fatigue"]
   dropout: 0.3
   cross_attn_heads: 4
+  # Prior class probabilities for Bayesian fusion (must sum to 1.0).
+  # Higher weight on Underload reflects baseline resting-state prior in typical lab sessions.
   initial_decision_weights: [0.5, 0.2, 0.2, 0.1]
 
 training:
@@ -53,6 +55,8 @@ training:
 
 ukf:
   state_dim: 4
+  # alpha controls sigma point spread (range: 1e-4 to 1). Small value (0.001) keeps
+  # sigma points close to the mean, reducing nonlinear sensitivity for this low-dimensional state.
   alpha: 0.001
   beta: 2.0
   kappa: 0.0
