@@ -17,5 +17,8 @@ tqdm>=4.65.0
 brainflow>=5.8.0
 jupyter>=1.0.0
 pytest>=7.3.0
-# Optional: Kaggle API for alternative dataset downloads (see scripts/download_datasets.py)
-kaggle>=1.6.0
+# Optional: alternative dataset download helpers (see scripts/download_datasets.py)
+# Install the ones relevant to your preferred download method:
+kaggle>=1.6.0            # Kaggle API  (--method kaggle)
+huggingface_hub>=0.20.0  # Hugging Face Hub (--method huggingface) – accessible from India
+gdown>=5.1.0             # Google Drive via gdown (--method gdrive) – accessible from India
