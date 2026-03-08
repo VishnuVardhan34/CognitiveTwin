@@ -109,34 +109,68 @@ pip install -e .
 ### 2. Download Datasets
 
 > **⚠️ Users in India (or anywhere the primary links are inaccessible):**
-> The official dataset websites can be hard to reach from India.  
-> Use the **Kaggle / alternative methods** described below, or run:
+> The official dataset websites (and sometimes specific Kaggle dataset pages) can be
+> hard to reach from India, and Kaggle sometimes shows **"We can't find that page"**
+> when a dataset has been removed or renamed.
+>
+> **Recommended India-friendly alternatives (no VPN needed):**
+>
+> | Dataset | Best Option | Command |
+> |---------|-------------|---------|
+> | DEAP    | Hugging Face | `python scripts/download_datasets.py --dataset deap --method huggingface --out ./datasets` |
+> | SEED-IV | Hugging Face | `python scripts/download_datasets.py --dataset seediv --method huggingface --out ./datasets` |
+> | DROZY   | Zenodo (open access) | `python scripts/download_datasets.py --dataset drozy --method zenodo --out ./datasets` |
+>
+> **One-time setup for Hugging Face:**
 > ```bash
-> pip install kaggle
-> # Set up ~/.kaggle/kaggle.json (see below), then:
-> python scripts/download_datasets.py --dataset all --method kaggle --out ./datasets
+> pip install huggingface_hub
+> huggingface-cli login    # free account at huggingface.co
 > ```
+>
+> **If a dataset author sends you a Google Drive link**, use:
+> ```bash
+> pip install gdown
+> python scripts/download_datasets.py --dataset deap --method gdrive \
+>     --gdrive-id <FILE_OR_FOLDER_ID> --out ./datasets
+> ```
+>
+> See **[Section: Alternative Dataset Download Methods](#-alternative-dataset-download-methods)**
+> below for the full list of options.
 
 #### DEAP Dataset
 
-**Option A – Official (requires registration, may be blocked in some regions):**
-1. Register at [eecs.qmul.ac.uk/mmv/datasets/deap](http://www.eecs.qmul.ac.uk/mmv/datasets/deap/download.html)
-2. Download `data_preprocessed_python.zip`
-3. Extract to `datasets/DEAP/data_preprocessed_python/`
+**Option A – Hugging Face (recommended for India – accessible worldwide):**
+```bash
+pip install huggingface_hub        # one-time setup
+huggingface-cli login              # free account required
+python scripts/download_datasets.py --dataset deap --method huggingface --out ./datasets
+```
 
-**Option B – Kaggle (recommended for India / blocked regions):**
+**Option B – Kaggle (if the dataset page loads in your region):**
 ```bash
 # Install Kaggle API (once)
 pip install kaggle
 
 # Download via Kaggle (requires a free account + API token)
+python scripts/download_datasets.py --dataset deap --method kaggle --out ./datasets
+# or directly:
 kaggle datasets download -d laevitasimpl/deap-dataset-for-emotion-analysis \
     -p datasets/DEAP --unzip
 ```
 
-**Option C – Request by e-mail:**
+> **Kaggle "page not found" fix:** If `laevitasimpl/deap-dataset-for-emotion-analysis`
+> returns a 404, the dataset was removed. The script automatically tries alternate slugs
+> (`birdy654/eeg-brainwave-dataset-feeling-emotions`, `pranavagneecm/deap`).
+> If all fail, switch to the Hugging Face method above.
+
+**Option C – Official website (may require VPN from India):**
+1. Register at [eecs.qmul.ac.uk/mmv/datasets/deap](http://www.eecs.qmul.ac.uk/mmv/datasets/deap/download.html)
+2. Download `data_preprocessed_python.zip`
+3. Extract to `datasets/DEAP/data_preprocessed_python/`
+
+**Option D – Request by e-mail:**
 Send your name and institutional affiliation to **deap@eecs.qmul.ac.uk** —
-the authors usually respond within a few days with a direct download link.
+ask specifically for a **Google Drive or Hugging Face link** for India-compatible access.
 
 ```bash
 mkdir -p datasets/DEAP
@@ -145,37 +179,51 @@ unzip data_preprocessed_python.zip -d datasets/DEAP/
 
 #### SEED-IV Dataset
 
-**Option A – Official (requires registration, may be slow from India):**
-1. Fill in the request form at [bcmi.sjtu.edu.cn/~seed/seed-iv.html](https://bcmi.sjtu.edu.cn/~seed/seed-iv.html#download-link) using an institutional e-mail.
-2. Extract to `datasets/SEED-IV/`
-
-**Option B – Kaggle:**
+**Option A – Hugging Face (recommended for India):**
 ```bash
+pip install huggingface_hub        # one-time setup
+huggingface-cli login
+python scripts/download_datasets.py --dataset seediv --method huggingface --out ./datasets
+```
+
+**Option B – Kaggle (if the dataset page loads):**
+```bash
+python scripts/download_datasets.py --dataset seediv --method kaggle --out ./datasets
+# or directly:
 kaggle datasets download -d qiriro/seed-iv-eeg-emotion-recognition \
     -p datasets/SEED-IV --unzip
 ```
 
+> **Kaggle "page not found" fix:** The script tries `qiriro/seed-iv-eeg-emotion-recognition`
+> and `shayanfazeli/seed-iv` as fallbacks. Use the Hugging Face method if all fail.
+
 **Option C – Request by e-mail:**
-Contact the BCMI lab at **bcmi@sjtu.edu.cn** with your institutional e-mail
-for a Google Drive / direct link.
+Contact the BCMI lab at **bcmi@sjtu.edu.cn** with your institutional e-mail.
+Ask for a **Google Drive link** for India-compatible access.
 
 #### DROZY Dataset
 
-**Option A – Official:**
-1. Available at [drozy.ulg.ac.be](http://drozy.ulg.ac.be/) *(try a VPN if this is blocked)*
-2. Extract to `datasets/DROZY/`
+**Option A – Zenodo (recommended for India – open access, no login required):**
+```bash
+python scripts/download_datasets.py --dataset drozy --method zenodo --out ./datasets
+```
+Direct Zenodo record: <https://zenodo.org/record/1230005> (DOI: 10.5281/zenodo.1230005)
 
-**Option B – Zenodo mirror:**
-Check [https://zenodo.org/search?q=DROZY](https://zenodo.org/search?q=DROZY) for a
-community-uploaded copy.
+**Option B – Google Drive (request from authors):**
+1. E-mail **drozy@ulg.ac.be** asking for a Google Drive link.
+2. Then run:
+   ```bash
+   pip install gdown
+   python scripts/download_datasets.py --dataset drozy --method gdrive \
+       --gdrive-id <ID_FROM_AUTHORS> --out ./datasets
+   ```
 
-**Option C – Request by e-mail:**
-Contact the DROZY dataset authors (University of Liège) at **drozy@ulg.ac.be** for
-a Google Drive or alternative link.
+**Option C – Official page (may need VPN from India):**
+Available at [drozy.ulg.ac.be](http://drozy.ulg.ac.be/) *(try a VPN if this is blocked)*
 
 > **See [`scripts/download_datasets.py`](scripts/download_datasets.py) for a
-> fully-automated download helper that uses the Kaggle API and prints step-by-step
-> manual instructions as a fallback.**
+> fully-automated download helper that supports Kaggle, Hugging Face, Zenodo,
+> Google Drive, and prints step-by-step manual instructions as a fallback.**
 
 ### 3. Configure
 
@@ -250,7 +298,80 @@ npm start
 ## 🌐 Alternative Dataset Download Methods
 
 > **This section is for users in India or other regions where the official dataset
-> websites are inaccessible or very slow.**
+> websites are inaccessible, or where Kaggle shows "We can't find that page".**
+
+### Why Kaggle sometimes shows "We can't find that page"
+
+Kaggle dataset pages can disappear when:
+- The uploader removes or renames the dataset.
+- The dataset is flagged for copyright and taken down.
+- Regional routing issues cause the page not to load.
+
+If this happens, use the **Hugging Face Hub** (for DEAP / SEED-IV) or
+**Zenodo** (for DROZY) methods – both are open, globally accessible repositories
+that work reliably from India.
+
+### Quick Reference – India-Accessible Methods
+
+| Dataset | Method | Command |
+|---------|--------|---------|
+| DEAP    | Hugging Face | `python scripts/download_datasets.py --dataset deap --method huggingface --out ./datasets` |
+| SEED-IV | Hugging Face | `python scripts/download_datasets.py --dataset seediv --method huggingface --out ./datasets` |
+| DROZY   | Zenodo | `python scripts/download_datasets.py --dataset drozy --method zenodo --out ./datasets` |
+| Any     | Google Drive | `python scripts/download_datasets.py --dataset <X> --method gdrive --gdrive-id <ID>` |
+| Any     | Manual / e-mail | `python scripts/download_datasets.py --dataset <X> --method manual` |
+
+### Hugging Face Hub (recommended for DEAP and SEED-IV)
+
+Hugging Face (`huggingface.co`) is accessible from India and most regions globally.
+
+**One-time setup:**
+1. Create a free account at [huggingface.co](https://huggingface.co).
+2. `pip install huggingface_hub`
+3. `huggingface-cli login`  (or set the `HF_TOKEN` environment variable)
+
+**Download:**
+```bash
+# DEAP
+python scripts/download_datasets.py --dataset deap --method huggingface --out ./datasets
+
+# SEED-IV
+python scripts/download_datasets.py --dataset seediv --method huggingface --out ./datasets
+```
+
+### Zenodo (recommended for DROZY)
+
+Zenodo (`zenodo.org`) is an open-access repository hosted by CERN.
+It is accessible from India with no login required.
+
+```bash
+# DROZY – downloads directly from https://zenodo.org/record/1230005
+python scripts/download_datasets.py --dataset drozy --method zenodo --out ./datasets
+```
+
+You can also download the DROZY archive manually from the browser:
+<https://zenodo.org/record/1230005> → click **Download** on the `.zip` file.
+
+### Google Drive via gdown (when dataset authors share a Drive link)
+
+If the dataset authors respond to your e-mail with a Google Drive link,
+use `gdown` (works reliably from India):
+
+**One-time setup:**
+```bash
+pip install gdown
+```
+
+**Download:**
+```bash
+# Replace <ID> with the file/folder ID from the Drive share link
+python scripts/download_datasets.py --dataset deap --method gdrive \
+    --gdrive-id <ID> --out ./datasets
+
+# For a shared folder, add --gdrive-folder
+python scripts/download_datasets.py --dataset seediv --method gdrive \
+    --gdrive-id <FOLDER_ID> --gdrive-folder --out ./datasets
+```
 
 ### Kaggle API Setup (one-time)
 
@@ -263,13 +384,18 @@ npm start
 ### Using the Download Helper Script
 
 ```bash
-# Download a single dataset
+# Download a single dataset (recommended India methods)
+python scripts/download_datasets.py --dataset deap   --method huggingface --out ./datasets
+python scripts/download_datasets.py --dataset seediv --method huggingface --out ./datasets
+python scripts/download_datasets.py --dataset drozy  --method zenodo      --out ./datasets
+
+# Kaggle (if pages are accessible)
 python scripts/download_datasets.py --dataset deap   --method kaggle --out ./datasets
 python scripts/download_datasets.py --dataset seediv --method kaggle --out ./datasets
-python scripts/download_datasets.py --dataset drozy  --method manual  # no Kaggle mirror yet
 
-# Download all three datasets at once
-python scripts/download_datasets.py --dataset all --method kaggle --out ./datasets
+# Google Drive (if the author provided an ID)
+python scripts/download_datasets.py --dataset drozy --method gdrive \
+    --gdrive-id <ID> --out ./datasets
 
 # Print manual/email instructions for any dataset
 python scripts/download_datasets.py --dataset deap --method manual
@@ -278,18 +404,21 @@ python scripts/download_datasets.py --dataset deap --method manual
 python scripts/download_datasets.py --dataset all --method info
 ```
 
-### Direct Kaggle Links (browser download)
+### Direct Download Links (for browser download)
 
-| Dataset | Kaggle Link |
-|---------|-------------|
-| DEAP | [kaggle.com/datasets/laevitasimpl/deap-dataset-for-emotion-analysis](https://www.kaggle.com/datasets/laevitasimpl/deap-dataset-for-emotion-analysis) |
-| DEAP (alternate) | [kaggle.com/datasets/birdy654/eeg-brainwave-dataset-feeling-emotions](https://www.kaggle.com/datasets/birdy654/eeg-brainwave-dataset-feeling-emotions) |
-| SEED-IV | [kaggle.com/datasets/qiriro/seed-iv-eeg-emotion-recognition](https://www.kaggle.com/datasets/qiriro/seed-iv-eeg-emotion-recognition) |
-| DROZY | Not yet on Kaggle – use e-mail request (see below) |
+| Dataset | Source | Link |
+|---------|--------|------|
+| DEAP | Hugging Face | [huggingface.co/datasets/SzLeaves/DEAP](https://huggingface.co/datasets/SzLeaves/DEAP) |
+| DEAP (alternate) | Kaggle | [kaggle.com/datasets/laevitasimpl/deap-dataset-for-emotion-analysis](https://www.kaggle.com/datasets/laevitasimpl/deap-dataset-for-emotion-analysis) |
+| DEAP (alternate) | Kaggle | [kaggle.com/datasets/birdy654/eeg-brainwave-dataset-feeling-emotions](https://www.kaggle.com/datasets/birdy654/eeg-brainwave-dataset-feeling-emotions) |
+| SEED-IV | Hugging Face | [huggingface.co/datasets/SzLeaves/SEED-IV](https://huggingface.co/datasets/SzLeaves/SEED-IV) |
+| SEED-IV (alternate) | Kaggle | [kaggle.com/datasets/qiriro/seed-iv-eeg-emotion-recognition](https://www.kaggle.com/datasets/qiriro/seed-iv-eeg-emotion-recognition) |
+| DROZY | Zenodo | [zenodo.org/record/1230005](https://zenodo.org/record/1230005) (DOI: 10.5281/zenodo.1230005) |
 
 ### E-mail Requests (always works)
 
-If Kaggle mirrors are unavailable, you can request datasets directly:
+If all automated methods fail, you can request datasets directly from the authors.
+Ask specifically for a **Google Drive or Hugging Face link** for India-compatible access.
 
 | Dataset | Contact |
 |---------|---------|
